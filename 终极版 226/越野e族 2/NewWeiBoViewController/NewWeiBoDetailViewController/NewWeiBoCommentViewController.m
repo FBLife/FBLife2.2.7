@@ -506,7 +506,7 @@
     CGRect _keyboardRect = [[[notification userInfo] objectForKey:_UIKeyboardFrameEndUserInfoKey] CGRectValue];
     
     [UIView animateWithDuration:0.3 animations:^{
-        backView.frame = CGRectMake(0,(iPhone5?568:480)-(IOS_VERSION >= 7.0?0:20)-_keyboardRect.size.height-73,320,73);
+        backView.frame = CGRectMake(0,(iPhone5?568:480)-(IOS_VERSION >= 7.0?0:20)-_keyboardRect.size.height-(myTextView.inputView==scrollView?72:73),320,73);
         
         myTextView.frame = CGRectMake(myTextView.frame.origin.x,IOS_VERSION>=7.0?64:44,myTextView.frame.size.width,(iPhone5?568-20-73-44-_keyboardRect.size.height:480-20-73-44-_keyboardRect.size.height)-(MY_MACRO_NAME?0:20));
     }];
