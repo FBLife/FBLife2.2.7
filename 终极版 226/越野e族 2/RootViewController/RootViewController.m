@@ -32,11 +32,12 @@
     UIView *freshview;
     newscellview *orcell;
     newsimage_scro *imagesc;
-//    newsdetailViewController *comment_;
+    //    newsdetailViewController *comment_;
     UIButton * refreshButton;
     AlertRePlaceView *_replaceAlertView;
     
     WenJiViewController * wenji;
+    UIView *halfblackView;
 }
 
 @end
@@ -56,7 +57,7 @@
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self)
     {
- 
+        
     }
     return self;
 }
@@ -74,6 +75,10 @@
 {
     [super viewWillAppear:NO];
     //
+    if (searchheaderview) {
+        self.navigationController.navigationBarHidden=!searchheaderview.hidden;
+        
+    }
     
     
     [MobClick beginEvent:@"RootViewController"];
@@ -100,9 +105,9 @@
     if (![stringnewsid isEqualToString:@"(null)"]&&stringnewsid.length!=0)
     {
         NSLog(@"newsid1%@",stringnewsid);
-
-    newsdetailViewController *    _comment_=[[newsdetailViewController alloc]init];
-
+        
+        newsdetailViewController *    _comment_=[[newsdetailViewController alloc]init];
+        
         NSLog(@"222");
         _comment_.string_Id=stringnewsid;
         [self.leveyTabBarController hidesTabBar:YES animated:YES];
@@ -214,6 +219,33 @@
     
     
     
+    
+    
+}
+
+-(void)viewDidAppear:(BOOL)animated{
+    [super viewDidAppear:NO];
+    
+    //    for (UIView *_viewhalf in [UIApplication sharedApplication].keyWindow.subviews) {
+    //        [_viewhalf removeFromSuperview];
+    //    }
+    
+    //
+    //    UIAlertView *alert_=[[UIAlertView alloc]initWithTitle:@"dismiss" message:nil delegate:nil cancelButtonTitle:@"yes" otherButtonTitles:nil, nil];
+    //    [alert_ show];
+    //
+    //    if (!halfblackView) {
+    //        halfblackView=[[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, iPhone5?568:480)];
+    //
+    //        halfblackView.backgroundColor=[UIColor blackColor];
+    //        halfblackView.userInteractionEnabled=NO;
+    //        halfblackView.alpha=0.8;
+    //        halfblackView.window.windowLevel=UIWindowLevelAlert-1;
+    //        [[UIApplication sharedApplication].keyWindow
+    //         addSubview:halfblackView];
+    //
+    //    }
+    
 }
 #pragma mark-通知
 
@@ -299,20 +331,20 @@
     //            type = 21;
     //        };
     //    }
-/*
- 有关消息推送的相关说明：
- 2 ：文集评论
- 3 ：画廊评论
- 4 ：微博评论
- 5 ：微博@
- 6 ：私信
- 7 ：文集@
- 9 ：关注
- 20 ：主贴回复
- 21 ：引用回复
- */
+    /*
+     有关消息推送的相关说明：
+     2 ：文集评论
+     3 ：画廊评论
+     4 ：微博评论
+     5 ：微博@
+     6 ：私信
+     7 ：文集@
+     9 ：关注
+     20 ：主贴回复
+     21 ：引用回复
+     */
     NSDictionary *dic_pushinfo=(NSDictionary *)note.object;
-
+    
     
     int type=[[[dic_pushinfo objectForKey:@"aps"] objectForKey:@"type"] integerValue];
     NSLog(@"dic===%@=======type====%d",dic_pushinfo,type);
@@ -325,19 +357,19 @@
         case 3:
         {
             [self pushtoxitongmessage];
-
+            
         }
             break;
         case 4:
         {
             [self pushtoxitongmessage];
-
+            
         }
             break;
         case 5:
         {
             [self pushtoxitongmessage];
-
+            
         }
             break;
         case 6:
@@ -348,13 +380,13 @@
         case 7:
         {
             [self pushtoxitongmessage];
-
+            
         }
             break;
         case 9:
         {
             [self pushtoxitongmessage];
-
+            
         }
             break;
         case 20:
@@ -365,23 +397,23 @@
             break;
         case 21:
         {
-          NSString *string_tid=[NSString stringWithFormat:@"%@",[[dic_pushinfo objectForKey:@"aps"] objectForKey:@"tid"]];
+            NSString *string_tid=[NSString stringWithFormat:@"%@",[[dic_pushinfo objectForKey:@"aps"] objectForKey:@"tid"]];
             [self pushtobbsdetailwithid:string_tid];
-
+            
         }
             break;
- 
-
+            
+            
         default:
             break;
     }
     
-
+    
     NSLog(@"==note==%@",dic_pushinfo);
     
 }
 -(void)pushtobbsdetailwithid:(NSString *)string_id{
-   
+    
     
     bbsdetailViewController *detaibbsvc=[[bbsdetailViewController alloc]init];
     detaibbsvc.bbsdetail_tid=string_id;
@@ -402,23 +434,23 @@
     NSLog(@"跳到fb通知");
     FBNotificationViewController *_fbnotificVc=[[FBNotificationViewController alloc]init];
     [self.navigationController pushViewController:_fbnotificVc animated:YES];
-
+    
 }
 
 
 - (void)viewDidLoad
 {
-//    [[UIApplication sharedApplication] setStatusBarHidden:YES];
-
+    //    [[UIApplication sharedApplication] setStatusBarHidden:YES];
+    
     
     [super viewDidLoad];
     
     mycurrentlanmu = 1;
     
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
-
+    
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(showOutput:) name:@"testpush" object:nil];
-
+    
     
     
     self.view = [[UIView alloc]initWithFrame:CGRectMake(0.0,0, 320, self.view.frame.size.height)];
@@ -568,7 +600,7 @@
     loadview=[[LoadingIndicatorView alloc]initWithFrame:CGRectMake(0, 900, 320, 37)];
     loadview.backgroundColor=[UIColor clearColor];
     
-
+    
     
     newsScrow=[[UIScrollView alloc]initWithFrame:CGRectMake(0, 37, 320, iPhone5?568-20-40-40-49+3:480-19-40-40-49+3)];
     newsScrow.contentSize=CGSizeMake(320*13, 0);
@@ -588,33 +620,33 @@
         mytesttab.delegate=self;
         [newsScrow addSubview:mytesttab];
         
-//        if (i==0) {
-//            
-//            
-//            
-//            [UIView animateWithDuration:0.5 animations:^{
-//                [mytesttab.tab setContentOffset:CGPointMake(0, -80)];
-//                
-//                
-//                
-//                
-//                //动画内容
-//                
-//            }completion:^(BOOL finished)
-//             
-//             {
-//                 
-//                 
-//                 
-//             }];
-//            
-//            
-//        }
+        //        if (i==0) {
+        //
+        //
+        //
+        //            [UIView animateWithDuration:0.5 animations:^{
+        //                [mytesttab.tab setContentOffset:CGPointMake(0, -80)];
+        //
+        //
+        //
+        //
+        //                //动画内容
+        //
+        //            }completion:^(BOOL finished)
+        //
+        //             {
+        //
+        //
+        //
+        //             }];
+        //
+        //
+        //        }
     }
     
-
+    
     tab_=[[UITableView alloc]initWithFrame:CGRectMake(0, 40, 320, iPhone5?568-20-40-40-49:480-19-40-40-49) style:UITableViewStylePlain];
-//    [self.view addSubview:tab_];
+    //    [self.view addSubview:tab_];
     
     tab_.delegate=self;
     tab_.dataSource=self;
@@ -634,7 +666,7 @@
     [recognizer_oftab setDirection:(UISwipeGestureRecognizerDirectionLeft)];
     [tab_ addGestureRecognizer:recognizer_oftab];
     
-
+    
     
     if (_refreshHeaderView == nil) {
 		
@@ -649,6 +681,25 @@
     _loadingview=[[loadingview alloc]initWithFrame:CGRectMake(0, 80, 320, iPhone5?568-20-40-40-49:480-20-40-40-49)];
     //[self.view addSubview:_loadingview];
     [self judgeversionandclean];
+    
+    
+    
+    searchresaultview=[[UITableView alloc]initWithFrame:CGRectMake(0,IOS_VERSION>=7?108:88, 320, iPhone5?568-20-40-40-49-5:480-19-40-40-49-5)];
+    searchresaultview.delegate=self;
+    searchresaultview.dataSource=self;
+    //searchresaultview.backgroundColor=[UIColor redColor];
+    searchresaultview.hidden=YES;
+    [self.view addSubview:searchresaultview];
+    
+    
+    if (!searchloadingview)
+    {
+        searchloadingview =[[LoadingIndicatorView alloc]initWithFrame:CGRectMake(0, 900, 320, 40)];
+        searchloadingview.backgroundColor=[UIColor clearColor];
+        searchloadingview.normalLabel.text=@"上拉加载更多";
+    }
+    
+    searchresaultview.tableFooterView = searchloadingview;
     
     rootnewsModel *model=[[rootnewsModel alloc]init];
     [model startloadcommentsdatawithtag:800 thetype:[personal place:[array_lanmu objectAtIndex:0]]];
@@ -679,15 +730,15 @@
         [self getdatafromcache];
         
         NSString * new = [NSString stringWithFormat:@"我们的新版本已经上线了,赶快去更新吧!"];
-
+        
         UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"发现新版本" message:new delegate:self cancelButtonTitle:@"立即升级" otherButtonTitles:@"下次提示",nil];
-
+        
         alert.delegate = self;
-
+        
         alert.tag = 10000;
-
+        
         [alert show];
-
+        
     }
 }
 
@@ -717,6 +768,7 @@
     [orr_array_id removeAllObjects];
     [tab_ reloadData];
     
+    
     if (!isHaveNetWork) {
         [UIView beginAnimations:nil context:nil];
         [UIView setAnimationDuration:0.3];
@@ -734,22 +786,22 @@
     
     NSLog(@"tag=========%d",sender.tag);
     
-        imageView.center = CGPointMake(30+48*(sender.tag-1),1);
-        
+    imageView.center = CGPointMake(30+48*(sender.tag-1),1);
+    
     newsTableview *mytab=(newsTableview*)[self.view viewWithTag:sender.tag-1+800];
     if (mytab.normalarray.count==0) {
         
-            [UIView animateWithDuration:0.5 animations:^{
-                [mytab.tab setContentOffset:CGPointMake(0, -80)];
-                
-                //动画内容
-                
-            }completion:^(BOOL finished)
+        [UIView animateWithDuration:0.5 animations:^{
+            [mytab.tab setContentOffset:CGPointMake(0, -80)];
+            
+            //动画内容
+            
+        }completion:^(BOOL finished)
+         
+         {
              
-             {
-                 
-             }];
-
+         }];
+        
         rootnewsModel *model=[[rootnewsModel alloc]init];
         [model startloadcommentsdatawithtag:sender.tag-1+800 thetype:[personal place:[array_lanmu objectAtIndex:sender.tag-1]]];
         model.delegate=self;
@@ -758,7 +810,7 @@
     }
     
     newsScrow.contentOffset=CGPointMake(320*(sender.tag-1), 0);
-
+    
 }
 
 
@@ -1190,7 +1242,7 @@
                 if (image_mutar.count!=0)
                 {
                     NSLog(@"到底有木有+%@",image_mutar);
-                  //  tab_.separatorColor=[UIColor colorWithRed:225/255.f green:225/255.f blue:225/255.f alpha:1];
+                    //  tab_.separatorColor=[UIColor colorWithRed:225/255.f green:225/255.f blue:225/255.f alpha:1];
                     
                     imagesc=[[newsimage_scro alloc]initWithFrame:CGRectMake(0, 0, 320, 163)];
                     [imagesc setImage_array:(NSArray *)image_mutar];
@@ -1526,12 +1578,12 @@
     NSLog(@"cellid=%@",orr_array_id);
     if (tableView==tab_)
     {
-     
+        
         if (orr_array_id.count>0)
         {
             NSLog(@"222");
             newsdetailViewController *    comment_=[[newsdetailViewController alloc]init];
-
+            
             comment_.string_Id=[orr_array_id objectAtIndex:indexPath.row-1];
             // [self setHidesBottomBarWhenPushed:YES];//跳入下一个View时先隐藏掉tabbar
             
@@ -1836,11 +1888,11 @@
             switch (type) {
                 case 1:
                     NSLog(@"到新闻的");
-                
+                    
                     if (imagesc.iscount-1>=0&&imagesc.iscount-1<5)
                     {
                         newsdetailViewController *    comment_=[[newsdetailViewController alloc]init];
-
+                        
                         NSLog(@"点击的第几个 ------  %@",[NSString stringWithFormat:@"%d",imagesc.iscount-1]);
                         comment_.string_Id=[rec_array_id objectAtIndex:imagesc.iscount-1];
                         [self.leveyTabBarController hidesTabBar:YES animated:YES];
@@ -1860,13 +1912,11 @@
                         [self.navigationController pushViewController:_bbsdetail animated:YES];
                     }
                     
-                    
                 }
                     break;
                 case 3:{
                     NSLog(@"到新闻的");
                     if (imagesc.iscount-1>=0&&imagesc.iscount-1<5) {
-                        self.navigationController.navigationBarHidden=NO;
                         NSLog(@"第三种情况link=%@",string_link_);
                         fbWebViewController *_web=[[fbWebViewController alloc]init];
                         _web.urlstring=string_link_;
@@ -1921,6 +1971,7 @@
     
     
     mysearchPage=1;
+    search_user_page = 1;
     issearchloadsuccess=NO;
     searchheaderview.hidden=NO;
     searchresaultview.hidden = NO;
@@ -1979,16 +2030,10 @@
         
         //        _searchbar.showsCancelButton=NO;
         
-        if (!searchresaultview) {
-            
-            
-            
-            searchresaultview=[[UITableView alloc]initWithFrame:CGRectMake(0,IOS_VERSION>=7?108:88, 320, iPhone5?568-20-40-40-49-8:480-19-40-40-49-8)];
-            searchresaultview.delegate=self;
-            searchresaultview.dataSource=self;
-            //searchresaultview.backgroundColor=[UIColor redColor];
-            [self.view addSubview:searchresaultview];
-        }
+        
+        
+        
+        
         // searchresaultview.backgroundColor=[UIColor greenColor];
         searchresaultview.hidden=NO;
         
@@ -2026,7 +2071,8 @@
     }
     
     current_select = buttonSelected;
-    searchresaultview.tableFooterView=nil;
+    
+    [searchloadingview startLoading];
     
     [self WhetherOrNotRequest];
 }
@@ -2116,7 +2162,10 @@
 - (void)searchBarCancelButtonClicked:(UISearchBar *) searchBar{
     
     self.navigationController.navigationBarHidden=NO;
-    searchresaultview.hidden=NO;
+    searchresaultview.backgroundColor=[UIColor redColor];
+    searchresaultview.hidden=YES;
+    
+    //    [searchresaultview removeFromSuperview];
     [_searchbar resignFirstResponder];
     
     searchheaderview.hidden=YES;
@@ -2125,8 +2174,9 @@
 -(void)searchcancell{
     
     self.navigationController.navigationBarHidden=NO;
-    [searchresaultview removeFromSuperview];
+    // [searchresaultview removeFromSuperview];
     [_searchbar resignFirstResponder];
+    searchresaultview.hidden=YES;
     
     searchheaderview.hidden=YES;
     blackcolorview.hidden=YES;
@@ -2138,8 +2188,6 @@
 
 -(void)searchbythenetework
 {
-    NSString * authod = [[NSUserDefaults standardUserDefaults] objectForKey:USER_AUTHOD];
-    
     switch (mysegment.currentPage)
     {
         case 0:
@@ -2159,7 +2207,7 @@
         {
             NSLog(@"点击的是微博");
             
-            string_searchurl = [NSString stringWithFormat:Search_weiBo,[_searchbar.text stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],authod,mysearchPage];
+            string_searchurl = [NSString stringWithFormat:Search_weiBo,[_searchbar.text stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],mysearchPage];
         }
             break;
         case 3:
@@ -2169,11 +2217,7 @@
             //            string_searchurl=[NSString stringWithFormat:@"http://so.fblife.com/api/searchapi.php?query=%@&fromtype=%d&pagesize=10&formattype=json",[_searchbar.text stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],4];
             
             
-            string_searchurl=[NSString stringWithFormat:Search_user,[_searchbar.text stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
-            
-            
-            
-            
+            string_searchurl=[NSString stringWithFormat:URL_SERCH_USER,[_searchbar.text stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],search_user_page];
         }
             break;
             
@@ -2183,7 +2227,6 @@
     
     
     NSLog(@"1请求的url = %@",string_searchurl);
-    
     
     
     request_search = [ASIHTTPRequest requestWithURL:[NSURL URLWithString:string_searchurl]];
@@ -2200,16 +2243,14 @@
             blackcolorview.hidden=YES;
             [searchloadingview stopLoading:1];
             issearchloadsuccess=NO;
-            if (mysearchPage==1) {
+            if (mysearchPage==1)
+            {
                 [self.array_searchresault removeAllObjects];
-                
             }
             
             NSDictionary * dicofsearch = [request_search.responseData objectFromJSONData];
             
             NSLog(@"搜索的信息 -=-=  %@",dicofsearch);
-            
-            
             
             if (mysegment.currentPage == 2)
             {
@@ -2224,51 +2265,154 @@
                 
                 NSString * errcode = [NSString stringWithFormat:@"%@",[dicofsearch objectForKey:@"errcode"]];
                 
+                [searchloadingview stopLoading:1];
+                
+                int the_count = [[dicofsearch objectForKey:@"count"] intValue];
+                
+                if (the_count == 0)
+                {
+                    UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"温馨提示" message:@"未找到该用户,请检查用户名是否正确" delegate:self cancelButtonTitle:@"确认" otherButtonTitles:nil,nil];
+                    
+                    [alert show];
+                    
+                    return;
+                }
+                
                 if ([errcode intValue]==0)
                 {
-                    NSDictionary * dic111 = [dicofsearch objectForKey:@"bbsinfo"];
+                    NSDictionary * dic111 = [dicofsearch objectForKey:@"data"];
                     
-                    PersonInfo * info = [[PersonInfo alloc] initWithDictionary:dic111];
+                    total_count_users = [[dicofsearch objectForKey:@"count"] intValue];
                     
-                    info.face_original = [dic111 objectForKey:@"small_avatar"];
+                    NSArray * allkeys = [dic111 allKeys];
                     
-                    info.city = [NSString stringWithFormat:@"%@",[dicofsearch objectForKey:@"location"]];
-                    
-                    if (info.username.length !=0)
+                    if (search_user_page ==1)
                     {
+                        if (total_count_users/20 == 0)
+                        {
+                            searchloadingview.normalLabel.text = @"没有更多了";
+                        }
+                        
                         [array_search_user removeAllObjects];
+                        [_array_searchresault removeAllObjects];
                         
-                        [_array_searchresault addObject:info];
+                        searchresaultview.contentOffset = CGPointMake(0,0);
                         
-                        [array_search_user addObject:info];
+                    }else
+                    {
+                        
+                    }
+                    
+                    
+                    for (int i = 0;i < allkeys.count;i++)
+                    {
+                        NSDictionary * myDic = [dic111 objectForKey:[allkeys objectAtIndex:i]];
+                        
+                        PersonInfo * info2 = [[PersonInfo alloc] initWithDictionary:myDic];
+                        
+                        info2.face_original = [dic111 objectForKey:@"small_avatar"];
+                        
+                        info2.city = [NSString stringWithFormat:@"%@",[dicofsearch objectForKey:@"location"]];
+                        
+                        if (info2.username.length !=0)
+                        {
+                            [_array_searchresault addObject:info2];
+                            [array_search_user addObject:info2];
+                        }
                     }
                     
                     [searchresaultview reloadData];
+                    
+                    return;
+                    
                 }else
                 {
                     UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"温馨提示" message:@"未找到该用户,请检查用户名是否正确" delegate:self cancelButtonTitle:@"确认" otherButtonTitles:nil,nil];
                     
                     [alert show];
+                    
+                    return;
                 }
                 
-                return;
+                
+                
+                
+                
+                /*
+                 
+                 NSString * errcode = [NSString stringWithFormat:@"%@",[dicofsearch objectForKey:@"errcode"]];
+                 
+                 if ([errcode intValue]==0)
+                 {
+                 NSDictionary * dic111 = [dicofsearch objectForKey:@"bbsinfo"];
+                 
+                 PersonInfo * info = [[PersonInfo alloc] initWithDictionary:dic111];
+                 
+                 info.face_original = [dic111 objectForKey:@"small_avatar"];
+                 
+                 info.city = [NSString stringWithFormat:@"%@",[dicofsearch objectForKey:@"location"]];
+                 
+                 if (info.username.length !=0)
+                 {
+                 [array_search_user removeAllObjects];
+                 
+                 [_array_searchresault addObject:info];
+                 
+                 [array_search_user addObject:info];
+                 }
+                 
+                 [searchresaultview reloadData];
+                 }else
+                 {
+                 UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"温馨提示" message:@"未找到该用户,请检查用户名是否正确" delegate:self cancelButtonTitle:@"确认" otherButtonTitles:nil,nil];
+                 
+                 [alert show];
+                 blackcolorview.hidden=NO;
+                 }
+                 
+                 return;
+                 
+                 */
             }
             
             
             //        if ([[dicofsearch objectForKey:@"allnumbers"] integerValue]>0)
             //        {
-            NSLog(@"是有数据的");
             if (dicofsearch.count>0) {
-                [self.array_searchresault addObjectsFromArray:[dicofsearch objectForKey:@"searchinfo"]];
+                
+                if ([[dicofsearch objectForKey:@"allnumbers"] integerValue]>0) {
+                    [self.array_searchresault addObjectsFromArray:[dicofsearch objectForKey:@"searchinfo"]];
+                    NSLog(@"是有数据的");
+                    
+                    
+                }else{
+                    NSLog(@"没有相关数据");
+                    
+                    if (mysegment.currentPage==0) {
+                        UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"温馨提示" message:@"未找到相关的新闻信息" delegate:self cancelButtonTitle:@"确认" otherButtonTitles:nil,nil];
+                        
+                        [alert show];
+                    }
+                    if (mysegment.currentPage==1) {
+                        UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"温馨提示" message:@"未找到相关的论坛信息" delegate:self cancelButtonTitle:@"确认" otherButtonTitles:nil,nil];
+                        
+                        [alert show];
+                    }
+                    blackcolorview.hidden=NO;
+                    return;
+                }
+                
+                
                 
             }
             
             
-            if (self.array_searchresault.count>0) {
-                searchresaultview.tableFooterView=searchloadingview;
-            }else{
-                searchresaultview.tableFooterView=nil;
-            }
+            //            if (self.array_searchresault.count>0)
+            //            {
+            //                searchresaultview.tableFooterView=searchloadingview;
+            //            }else{
+            //                searchresaultview.tableFooterView=nil;
+            //            }
             
             if (mysegment.currentPage == 0)
             {
@@ -2313,9 +2457,21 @@
 }
 
 
-
 -(void)getWeiBoSearchData:(NSDictionary *)dic11111
 {
+    if ([[dic11111 objectForKey:@"errcode"] intValue]!=0) {
+        UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"温馨提示" message:@"未找到相关的微博信息" delegate:self cancelButtonTitle:@"确认" otherButtonTitles:nil,nil];
+        blackcolorview.hidden=NO;
+        
+        [alert show];
+        return;
+        //<<<<<<< HEAD
+        //
+        //=======
+        //        blackcolorview.hidden=NO;
+        //>>>>>>> FETCH_HEAD
+    }
+    
     NSDictionary * rootObject = [[NSDictionary alloc] initWithDictionary:dic11111];
     
     NSString *errcode =[NSString stringWithFormat:@"%@",[rootObject objectForKey:ERRCODE]];
@@ -2326,14 +2482,22 @@
         
         if ([userinfo isEqual:[NSNull null]])
         {
-            //如果没有微博的话
-            NSLog(@"------------没有微博信息---------------");
             
-            UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"温馨提示" message:@"未找到相关的微博信息" delegate:self cancelButtonTitle:@"确认" otherButtonTitles:nil,nil];
-            
-            [alert show];
-            
-            return;
+            if (mysearchPage == 1)
+            {
+                //如果没有微博的话
+                NSLog(@"------------没有微博信息---------------");
+                
+                UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"温馨提示" message:@"未找到相关的微博信息" delegate:self cancelButtonTitle:@"确认" otherButtonTitles:nil,nil];
+                
+                [alert show];
+                blackcolorview.hidden=NO;
+                
+                return;
+            }else
+            {
+                searchloadingview.normalLabel.text = @"没有更多了";
+            }
             
         }else
         {
@@ -2435,9 +2599,9 @@
         
         
         int   number=(int)newsScrow.contentOffset.x/320;
-     //   NSLog(@"yes当前是%@===number==%d====%f",[array_lanmu objectAtIndex:number],number,newsScrow.contentOffset.x);
+        //   NSLog(@"yes当前是%@===number==%d====%f",[array_lanmu objectAtIndex:number],number,newsScrow.contentOffset.x);
         UIImageView * imageView = (UIImageView *)[self.view viewWithTag:99];
-      //  imageView.frame=CGRectMake(35/2+48*newsScrow.contentOffset.x/320, 0, 71/2, 2);
+        //  imageView.frame=CGRectMake(35/2+48*newsScrow.contentOffset.x/320, 0, 71/2, 2);
         imageView.center=CGPointMake(28+48*newsScrow.contentOffset.x/320, 1);
         
         if (number==6) {
@@ -2451,20 +2615,16 @@
         }
         if (number==12) {
             _titleView.contentOffset=CGPointMake(310, 0);
-
+            
         }
     }
     
-   }
+}
 
 
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate{
     
-    if (!searchloadingview) {
-        searchloadingview =[[LoadingIndicatorView alloc]initWithFrame:CGRectMake(0, 900, 320, 40)];
-        searchloadingview.backgroundColor=[UIColor clearColor];
-        searchloadingview.normalLabel.text=@"上拉加载更多";
-    }
+    
     
     if (scrollView==_titleView) {
         
@@ -2480,21 +2640,26 @@
                 
                 issearchloadsuccess=!issearchloadsuccess;
                 mysearchPage++;
-                if (mysegment.currentPage==3) {
-                    searchresaultview.tableFooterView=nil;
-                }else{
-                    if (self.array_searchresault.count>0) {
-                        searchresaultview.tableFooterView=searchloadingview;
-                    }else{
-                        
-                        searchresaultview.tableFooterView=nil;
+                if (mysegment.currentPage==3)
+                {
+                    if (search_user_page*20>=total_count_users)
+                    {
+                        searchloadingview.normalLabel.text = @"没有更多了";
+                        return;
                     }
+                    
+                    search_user_page++;
+                }else{
+                    //                    if (self.array_searchresault.count>0) {
+                    //                        searchresaultview.tableFooterView=searchloadingview;
+                    //                    }else{
+                    //
+                    //                        searchresaultview.tableFooterView=nil;
+                    //                    }
                 }
                 
                 [self searchbythenetework];
                 [searchloadingview startLoading];
-                
-                
             }
             
         }
@@ -2503,13 +2668,13 @@
     {
         int   number=scrollView.contentOffset.x/320;
         NSLog(@"/////yes当前是%@===number==%d====%f",[array_lanmu objectAtIndex:number],number,scrollView.contentOffset.x);
-
-	
+        
+        
     }
 }
 - (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView;
 {
-  
+    
     
     NSLog(@"scrollViewDidEndScrollingAnimation");
 }
@@ -2538,19 +2703,19 @@
              
              
          }];
-
+        
         rootnewsModel *model=[[rootnewsModel alloc]init];
         [model startloadcommentsdatawithtag:number+800 thetype:[personal place:[array_lanmu objectAtIndex:number]]];
         model.delegate=self;
-    
+        
         
     }else{
         NSLog(@"当前已经有数据，不需要刷新");
     }
-
     
-
-
+    
+    
+    
     
 }      // called when scroll view grinds to a halt
 
@@ -2582,7 +2747,7 @@
 -(void)showguanggao{
     
     downloadtool *tool_=[[downloadtool alloc]init];
-    [tool_ setUrl_string:@"http://cast.aim.yoyi.com.cn/afp/door/;ap=x17117be4be6c5150001;ct=js;pu=n1428243fc09e7230001;/?"];
+    [tool_ setUrl_string:@"http://cmsweb.fblife.com/data/app.ad.txt"];
     tool_.delegate=self;
     
     
@@ -2600,7 +2765,7 @@
     @try {
         //  NSDictionary * dic = [data objectFromJSONData];
         NSLog(@"%s",__FUNCTION__);
-        NSArray *array_test=[data objectFromJSONData];
+        NSDictionary *array_test=[data objectFromJSONData];
         NSLog(@"dic== %@",array_test);
         AsyncImageView *guanggao_image=[[AsyncImageView alloc]init];
         guanggao_image.delegate=self;
@@ -2610,9 +2775,8 @@
             NSLog(@"没有找到图片");
             
         }else{
-            NSDictionary *dic_img=[array_test objectAtIndex:0];
             
-            NSString *string_src=[NSString stringWithFormat:@"%@",[dic_img objectForKey:@"imgsrc"]];
+            NSString *string_src=[NSString stringWithFormat:@"%@",[array_test objectForKey:@"imgsrc"]];
             
             [guanggao_image loadImageFromURL:string_src withPlaceholdImage:nil];
             
@@ -2651,27 +2815,14 @@
 }
 
 -(void)doneloadmoremornormal:(NSDictionary*)_morenormaldic tag:(int)_tag{
-    NSLog(@"22222222222222");
     
-    
-    
-
     newsTableview *mytab=(newsTableview*)[self.view viewWithTag:_tag];
     
-    NSLog(@"mytab.tag=====%d",mytab.tag);
-    
-    
-    
-    
     [mytab newstabreceivemorenormaldic:_morenormaldic];
-    
-    
-    
-
 }
 -(void)successloadcommentdic:(NSDictionary *)_comdic mormaldic:(NSDictionary *)_nordic tag:(int)_tag{
     
-     NSLog(@"推荐新闻的dic===%@普通新闻的dic=====%@=======%d",_comdic,_nordic,_tag);
+    NSLog(@"推荐新闻的dic===%@普通新闻的dic=====%@=======%d",_comdic,_nordic,_tag);
     newsTableview *mytab=(newsTableview*)[self.view viewWithTag:_tag];
     [mytab newstabreceivecommentdic:_comdic normaldic:_nordic];
     
