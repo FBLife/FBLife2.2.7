@@ -14,6 +14,9 @@
 
 -(void)startloadcommentsdatawithtag:(int)_tag thetype:(NSString *)_type{
     
+    
+    
+    
     //推荐新闻的
     
     for (int i=0; i<3; i++) {
@@ -35,7 +38,9 @@
     [_requset setCompletionBlock:^{
         dic_comment = [requestcomment.responseData objectFromJSONData];
         NSLog(@"推荐的？？？？？？？===dic====%@",dic_comment);
-
+        
+        
+        
         @try {
             if ([[dic_comment objectForKey:@"errno"] intValue] ==0)
             {
@@ -57,7 +62,7 @@
                 
                 
             }
-
+            
             
             
         }
@@ -89,7 +94,7 @@
     
     [_requsetnormal setCompletionBlock:^{
         dic_normal = [requestnomal.responseData objectFromJSONData];
-        NSLog(@"普通的？？？？？？？===dic====%@",dic_normal);
+        NSLog(@"普通的？？？？？？？%s===dic====%@",__FUNCTION__,dic_normal);
         
         
         @try {
@@ -109,13 +114,13 @@
                 NSLog(@"%@普通新闻和推荐新闻都下载成功了",self.type);
                 
                 [self.delegate successloadcommentdic:dic_comment mormaldic:dic_normal tag:self.tag];
-
+                
                 
                 
                 
                 
             }
-
+            
             
         }
         
@@ -132,11 +137,11 @@
     }];
     
     [_requsetnormal startAsynchronous];
-
-
     
-
-  
+    
+    
+    
+    
 }
 
 
@@ -179,12 +184,12 @@
         @finally {
             
             [self.delegate doneloadmoremornormal:dic_normal tag:self.tag];
-                
             
-                
-                
-                
-                
+            
+            
+            
+            
+            
             
             
         }
@@ -205,7 +210,7 @@
     
     
     
-
+    
     
 }
 

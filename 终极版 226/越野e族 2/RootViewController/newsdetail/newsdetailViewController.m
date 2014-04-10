@@ -38,7 +38,7 @@
 }
 @end
 @implementation newsdetailViewController
-@synthesize _pages,string_Id = _string_Id,title_Str=_title_Str,weburl_Str=_weburl_Str,imgforshare=_imgforshare;
+//@synthesize _pages,string_Id = _string_Id,title_Str=_title_Str,weburl_Str=_weburl_Str,imgforshare=_imgforshare;
 
 - (id)initWithID:(NSString*)id
 {
@@ -59,7 +59,7 @@
             [aviewp removeFromSuperview];
         }
     }
-
+    
     self.navigationController.navigationBarHidden=NO;
     
     [text_write resignFirstResponder];
@@ -72,17 +72,16 @@
     }
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"newsid"];
     
-
+    
     
 }
 
 -(void)viewWillDisappear:(BOOL)animated
 {
     _isloadingIv.hidden=YES;
-
     
     [MobClick endEvent:@"newsdetailViewController"];
-
+    
     //  self.navigationController.navigationBarHidden = YES;
 }
 
@@ -91,7 +90,7 @@
     self.navigationController.navigationBarHidden=NO;
     self.view.frame=CGRectMake(0, 0, 320, 1000);
     self.view.backgroundColor=[UIColor greenColor];
-
+    
     jiushizhegele=1;
     [super viewDidLoad];
     currentpage=1;
@@ -118,15 +117,15 @@
     NSDictionary * dict = [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:cc,[UIFont systemFontOfSize:20],[UIColor clearColor],nil] forKeys:[NSArray arrayWithObjects:UITextAttributeTextColor,UITextAttributeFont,UITextAttributeTextShadowColor,nil]];
     
     self.navigationController.navigationBar.titleTextAttributes = dict;
-
     
-
-   
-
+    
+    
+    
+    
     if([self.navigationController.navigationBar respondsToSelector:@selector(setBackgroundImage:forBarMetrics:)] ) {
         //iOS 5 new UINavigationBar custom background
-            [self.navigationController.navigationBar setBackgroundImage:MY_MACRO_NAME?[UIImage imageNamed:IOS7DAOHANGLANBEIJING]:[UIImage imageNamed:@"ios7eva320_44.png"] forBarMetrics: UIBarMetricsDefault];
-
+        [self.navigationController.navigationBar setBackgroundImage:MY_MACRO_NAME?[UIImage imageNamed:IOS7DAOHANGLANBEIJING]:[UIImage imageNamed:@"ios7eva320_44.png"] forBarMetrics: UIBarMetricsDefault];
+        
     }
     
     UIButton *button_back=[[UIButton alloc]initWithFrame: CGRectMake(MY_MACRO_NAME? -5:5, 3, 12, 43/2)];
@@ -254,7 +253,13 @@
     
     recognizer.direction = UISwipeGestureRecognizerDirectionRight;
     [_webView addGestureRecognizer:recognizer];
-    [secondWebView addGestureRecognizer:recognizer];
+    
+    UISwipeGestureRecognizer* recognizer2;
+    // handleSwipeFrom 是偵測到手势，所要呼叫的方法
+    recognizer2 = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipeFrom)];
+    
+    recognizer2.direction = UISwipeGestureRecognizerDirectionRight;
+    [secondWebView addGestureRecognizer:recognizer2];
     //评论部分
     
     if (isiphone5) {
@@ -519,14 +524,24 @@
 #pragma mark-轻扫
 
 -(void)handleSwipeFrom{
+    
+    
+    NSHTTPCookie *cookie;
+    NSHTTPCookieStorage *storage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
+    for (cookie in [storage cookies])
+    {
+        [storage deleteCookie:cookie];
+    }
     newstool.delegate=nil;
     [newstool stop];
+    newstool=nil;
     [_request cancel];
     [_request cancelAuthentication];
     _request.delegate=nil;
-  
+    _request=nil;
     
-  
+    
+    
     [self.navigationController popViewControllerAnimated:YES];
 }
 #pragma mark-webview的代理
@@ -537,7 +552,8 @@
 }
 - (void)webViewDidFinishLoad:(UIWebView *)webView{
     
-
+    
+    [webView stopLoading];
     
     
     NSString * height = [webView stringByEvaluatingJavaScriptFromString: @"document.body.offsetHeight"];
@@ -545,9 +561,6 @@
     
     
     //换了
-    
-    
-    
     
 }
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error{
@@ -802,7 +815,7 @@
 }
 #pragma mark-测试自己写的效率
 -(void)Mytool{
-
+    
     if (!isHaveNetWork) {
         if (!_isloadingIv) {
             _isloadingIv=[[loadingimview alloc]initWithFrame:CGRectMake(100, 200, 150, 100) labelString:@"正在加载"];
@@ -818,14 +831,21 @@
         newstool=[[downloadtool alloc]init];
         NSString *string_url=[NSString stringWithFormat:@"http://cmsweb.fblife.com/ajax.php?c=newstwo&a=newsinfo&id=%@&type=json&page=%d",self.string_Id,currentpage];
         //  NSString *string_test=@"http://cmstest.fblife.com/ajax.php?c=newstwo&a=newsinfo&type=json&id=3457&page=3&pagesize=1";
+        
+        
+        
+        
+        
+        
         NSLog(@"请求的url为%@",string_url);
         [newstool setUrl_string:string_url];
         newstool.delegate=self;
         if (jiushizhegele<10) {
-            [newstool start];
             
         }
-
+        [newstool start];
+        
+        
     }else{
         [_replaceAlertView removeFromSuperview];
         _replaceAlertView=nil;
@@ -837,7 +857,7 @@
         [_replaceAlertView hide];
         
     }
- 
+    
 }
 -(void)downloadtool:(downloadtool *)tool didfinishdownloadwithdata:(NSData *)data
 {
@@ -884,7 +904,8 @@
                 str_titleofnews=[NSString stringWithFormat:@"%@",[dic objectForKey:@"title"]];
                 str_dateofnews=[NSString stringWithFormat:@"%@",[dic objectForKey:@"publishtime"]];
                 str_dateofnews=[personal timechange:str_dateofnews];
-                str_author=[NSString stringWithFormat:@"%@",[dic objectForKey:@"author"]];
+                str_author=[NSString stringWithFormat:@"%@",[dic objectForKey:@"editor"]];
+                str_resource=[NSString stringWithFormat:@"%@",[dic objectForKey:@"resource"]];
                 if (str_author.length==0||[str_author isEqualToString:@"(null)"]) {
                     str_author=@"";
                 }
@@ -937,7 +958,7 @@
     }
     
     
-   
+    
     //[loadingreplaceview hide];
 }
 
@@ -946,27 +967,32 @@
     if (array_photo.count>0) {
         NSString * fullURL= [NSString stringWithFormat:@"%@",[array_photo objectAtIndex:0]];
         NSLog(@"1请求的url = %@",fullURL);
-        ASIHTTPRequest * request = [ASIHTTPRequest requestWithURL:[NSURL URLWithString:fullURL]];
+        requestimg = [ASIHTTPRequest requestWithURL:[NSURL URLWithString:fullURL]];
+        requestimg.tag=2014;
+        //        __weak ASIHTTPRequest * _requset = request;
         
-        __block ASIHTTPRequest * _requset = request;
+        //        __weak typeof(request) weakRequest = request;
         
-        _requset.delegate = self;
+        __weak typeof(self) weakSelf = self;
         
-        [_requset setCompletionBlock:^{
+        requestimg.delegate = self;
+        
+        [requestimg setCompletionBlock:^{
+            
             NSLog(@"说明这个照片下载成功了");
-            self.imgforshare= [UIImage imageWithData:request.responseData];
+            weakSelf.imgforshare= [UIImage imageWithData:requestimg.responseData];
             
             
         }];
         
         
-        [_requset setFailedBlock:^{
+        [requestimg setFailedBlock:^{
             
-            [request cancel];
+            [requestimg cancel];
             
         }];
         
-        [_requset startAsynchronous];
+        [requestimg startAsynchronous];
         
     }
     
@@ -988,11 +1014,11 @@
         if (dangqianwebview==1) {
             
             
-//            [UIView beginAnimations:nil context:nil];
-//            [UIView setAnimationDuration:1];
-//            _webView.frame=CGRectMake(0, 0, 320 ,iPhone5? 314+88+105-41:314+105-41+4+2);
-//            secondWebView.frame=CGRectMake(0, -(iPhone5? 314+88+105-41:314+105-41+4+2), 320 ,iPhone5? 314+88+105-41:314+105-41+4+2);
-//            [UIView commitAnimations];
+            //            [UIView beginAnimations:nil context:nil];
+            //            [UIView setAnimationDuration:1];
+            //            _webView.frame=CGRectMake(0, 0, 320 ,iPhone5? 314+88+105-41:314+105-41+4+2);
+            //            secondWebView.frame=CGRectMake(0, -(iPhone5? 314+88+105-41:314+105-41+4+2), 320 ,iPhone5? 314+88+105-41:314+105-41+4+2);
+            //            [UIView commitAnimations];
             
             
             
@@ -1001,7 +1027,7 @@
             [UIView animateWithDuration:1 animations:^{
                 _webView.frame=CGRectMake(0, 0, 320 ,iPhone5? 314+88+105-41:314+105-41+4+2);
                 secondWebView.frame=CGRectMake(0, -(iPhone5? 314+88+105-41:314+105-41+4+2), 320 ,iPhone5? 314+88+105-41:314+105-41+4+2);
-
+                
                 
                 
                 
@@ -1009,7 +1035,7 @@
              
              {
                  secondWebView.alpha=0;
-
+                 
                  
                  
              }];
@@ -1017,12 +1043,12 @@
             
         }else{
             NSLog(@"应该走这个方法");
-//            
-//            [UIView beginAnimations:nil context:nil];
-//            [UIView setAnimationDuration:1];
-//            secondWebView.frame=CGRectMake(0, 0, 320 ,iPhone5? 314+88+105-41:314+105-41+4+2);
-//            _webView.frame=CGRectMake(0, -(iPhone5? 314+88+105-41:314+105-41+4+2), 320 ,iPhone5? 314+88+105-41:314+105-41+4+2);
-//            [UIView commitAnimations];
+            //
+            //            [UIView beginAnimations:nil context:nil];
+            //            [UIView setAnimationDuration:1];
+            //            secondWebView.frame=CGRectMake(0, 0, 320 ,iPhone5? 314+88+105-41:314+105-41+4+2);
+            //            _webView.frame=CGRectMake(0, -(iPhone5? 314+88+105-41:314+105-41+4+2), 320 ,iPhone5? 314+88+105-41:314+105-41+4+2);
+            //            [UIView commitAnimations];
             
             
             
@@ -1037,7 +1063,7 @@
              {
                  
                  _webView.alpha=0;
-
+                 
                  
              }];
             
@@ -1054,11 +1080,11 @@
         if (dangqianwebview==1) {
             
             
-//            [UIView beginAnimations:nil context:nil];
-//            [UIView setAnimationDuration:1];
-//            _webView.frame=CGRectMake(0, 0, 320 ,iPhone5? 314+88+105-41:314+105-41+4+2);
-//            secondWebView.frame=CGRectMake(0, (iPhone5? 314+88+105-41:314+105-41+4+2), 320 ,iPhone5? 314+88+105-41:314+105-41+4+2);
-//            [UIView commitAnimations];
+            //            [UIView beginAnimations:nil context:nil];
+            //            [UIView setAnimationDuration:1];
+            //            _webView.frame=CGRectMake(0, 0, 320 ,iPhone5? 314+88+105-41:314+105-41+4+2);
+            //            secondWebView.frame=CGRectMake(0, (iPhone5? 314+88+105-41:314+105-41+4+2), 320 ,iPhone5? 314+88+105-41:314+105-41+4+2);
+            //            [UIView commitAnimations];
             
             
             
@@ -1077,12 +1103,12 @@
             
         }else{
             
-//            [UIView beginAnimations:nil context:nil];
-//            [UIView setAnimationDuration:1];
-//            secondWebView.frame=CGRectMake(0, 0, 320 ,iPhone5? 314+88+105-41:314+105-41+4+2);
-//            _webView.frame=CGRectMake(0, (iPhone5? 314+88+105-41:314+105-41+4+2), 320 ,iPhone5? 314+88+105-41:314+105-41+4+2);
-//            [UIView commitAnimations];
-//            
+            //            [UIView beginAnimations:nil context:nil];
+            //            [UIView setAnimationDuration:1];
+            //            secondWebView.frame=CGRectMake(0, 0, 320 ,iPhone5? 314+88+105-41:314+105-41+4+2);
+            //            _webView.frame=CGRectMake(0, (iPhone5? 314+88+105-41:314+105-41+4+2), 320 ,iPhone5? 314+88+105-41:314+105-41+4+2);
+            //            [UIView commitAnimations];
+            //
             [UIView animateWithDuration:1 animations:^{
                 
                 secondWebView.frame=CGRectMake(0, 0, 320 ,iPhone5? 314+88+105-41:314+105-41+4+2);
@@ -1105,11 +1131,11 @@
 
 -(void)downloadtoolError{
     _isloadingIv.hidden=YES;
-
+    
     jiushizhegele++;
     if (jiushizhegele<20) {
         [self Mytool];
-
+        
     }else{
         [_replaceAlertView removeFromSuperview];
         _replaceAlertView=nil;
@@ -1121,7 +1147,7 @@
         [_replaceAlertView hide];
         
     }
-
+    
 }
 #pragma mark-显示框
 -(void)hidefromview{
@@ -1261,6 +1287,7 @@
     comment_.string_commentnumber=str_commentnumberofnews;
     comment_.string_date=str_dateofnews;
     comment_.string_author=str_author;
+    comment_.string_resource=str_resource;
     [self.leveyTabBarController hidesTabBar:YES animated:YES];
     [self.navigationController pushViewController:comment_ animated:YES];
     
@@ -1301,7 +1328,7 @@
                 
             }
             
-                
+            
             
             
             
@@ -1312,7 +1339,7 @@
     [editActionSheet addButtonWithTitle:@"分享给微信好友"];
     [editActionSheet addButtonWithTitle:@"分享到微信朋友圈"];
     [editActionSheet addButtonWithTitle:@"分享到邮箱"];
-
+    
     
     [editActionSheet addButtonWithTitle:@"取消"];
     editActionSheet.cancelButtonIndex = editActionSheet.numberOfButtons - 1;
@@ -1352,34 +1379,34 @@
         
     }else if(buttonIndex==1){
         NSLog(@"到新浪微博界面的");
-//        
-//        NSString *string_islogin=[[NSUserDefaults standardUserDefaults]objectForKey:@"issinalongin"];
-//        
-//        if ([string_islogin isEqualToString:@"no error"]) {
-//            
-//            SSWBViewController *_sinaShare=[[SSWBViewController alloc]init];
-//            _sinaShare._shareimg=self.imgforshare;
-//            _sinaShare.string_text=[NSString stringWithFormat:@"%@  %@（分享自@越野e族）",_title_Str,_weburl_Str] ;
-//            [self presentModalViewController:_sinaShare animated:YES];
-//            
-//            
-//            
-//        }else{
-//            UMSocialSnsPlatform *snsPlatform = [UMSocialSnsPlatformManager getSocialPlatformWithName:@"sina"];
-//            snsPlatform.loginClickHandler(self,[UMSocialControllerService defaultControllerService],YES,^(UMSocialResponseEntity *response){
-//                NSLog(@"lalallalalresponse is %@",response);
-//                
-//                NSString  *mes=response.message;
-//                
-//                NSLog(@"mes--===re==%@",mes);
-//                [[NSUserDefaults standardUserDefaults] setObject:@"no error" forKey:@"issinalongin"];
-//                
-//                
-//            });
-//            
-//        }
-//
-     
+        //
+        //        NSString *string_islogin=[[NSUserDefaults standardUserDefaults]objectForKey:@"issinalongin"];
+        //
+        //        if ([string_islogin isEqualToString:@"no error"]) {
+        //
+        //            SSWBViewController *_sinaShare=[[SSWBViewController alloc]init];
+        //            _sinaShare._shareimg=self.imgforshare;
+        //            _sinaShare.string_text=[NSString stringWithFormat:@"%@  %@（分享自@越野e族）",_title_Str,_weburl_Str] ;
+        //            [self presentModalViewController:_sinaShare animated:YES];
+        //
+        //
+        //
+        //        }else{
+        //            UMSocialSnsPlatform *snsPlatform = [UMSocialSnsPlatformManager getSocialPlatformWithName:@"sina"];
+        //            snsPlatform.loginClickHandler(self,[UMSocialControllerService defaultControllerService],YES,^(UMSocialResponseEntity *response){
+        //                NSLog(@"lalallalalresponse is %@",response);
+        //
+        //                NSString  *mes=response.message;
+        //
+        //                NSLog(@"mes--===re==%@",mes);
+        //                [[NSUserDefaults standardUserDefaults] setObject:@"no error" forKey:@"issinalongin"];
+        //
+        //
+        //            });
+        //
+        //        }
+        //
+        
         WBWebpageObject *pageObject = [ WBWebpageObject object ];
         pageObject.objectID =@"nimeideid";
         pageObject.thumbnailData =UIImageJPEGRepresentation([self scaleToSize:self.imgforshare size:CGSizeMake(self.imgforshare.size.width/5, self.imgforshare.size.height/5)], 1);
@@ -1388,7 +1415,7 @@
         pageObject.webpageUrl = _weburl_Str;
         WBMessageObject *message = [ [ WBMessageObject alloc ] init ];
         message.text =[NSString stringWithFormat:@"%@（分享自@越野e族）",_title_Str] ;
-
+        
         message.mediaObject = pageObject;
         WBSendMessageToWeiboRequest *req = [ [  WBSendMessageToWeiboRequest alloc ] init  ];
         req.message = message;
@@ -1397,7 +1424,7 @@
     }
     
     else if(buttonIndex==4){
-      
+        
         
         NSString *string_bodyofemail=[NSString stringWithFormat:@"%@ \n %@ \n\n下载越野e族客户端 http://mobile.fblife.com/download.php",_title_Str,_weburl_Str] ;
         [self okokokokokokowithstring:string_bodyofemail];
@@ -1495,89 +1522,89 @@
 
 {
     NSString *title = @"Mail";
-
-   NSString *msg;
-
+    
+    NSString *msg;
+    
     switch (result)
-
+    
     {
-
-       case MFMailComposeResultCancelled:
-
+            
+        case MFMailComposeResultCancelled:
+            
             msg = @"Mail canceled";//@"邮件发送取消";
-
+            
             break;
-
+            
         case MFMailComposeResultSaved:
-
+            
             msg = @"Mail saved";//@"邮件保存成功";
-
-           // [self alertWithTitle:title msg:msg];
-
-           break;
-
+            
+            // [self alertWithTitle:title msg:msg];
+            
+            break;
+            
         case MFMailComposeResultSent:
-
+            
             msg = @"邮件发送成功";//@"邮件发送成功";
-
+            
             [self alertWithTitle:title msg:msg];
-
-           break;
-
+            
+            break;
+            
         case MFMailComposeResultFailed:
-
-           msg = @"邮件发送失败";//@"邮件发送失败";
-
-          [self alertWithTitle:title msg:msg];
-
-           break;
-
-       default:
-
-           msg = @"Mail not sent";
-
-           // [self alertWithTitle:title msg:msg];
-
-           break;  
-
-   }
-
+            
+            msg = @"邮件发送失败";//@"邮件发送失败";
+            
+            [self alertWithTitle:title msg:msg];
+            
+            break;
+            
+        default:
+            
+            msg = @"Mail not sent";
+            
+            // [self alertWithTitle:title msg:msg];
+            
+            break;
+            
+    }
+    
     [self  dismissModalViewControllerAnimated:YES];
     
-
+    
 }
 - (void) alertWithTitle: (NSString *)_title_ msg: (NSString *)msg
 
 {
-
-   UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示"
-
-                                                   message:msg
-
-                                                  delegate:nil
-                                         cancelButtonTitle:@"确定"
-
+    
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示"
+                          
+                                                    message:msg
+                          
+                                                   delegate:nil
+                                          cancelButtonTitle:@"确定"
+                          
                                           otherButtonTitles:nil];
-
+    
     [alert show];
-
-
+    
+    
 }
 - (void) sendEmail:(NSString *)to cc:(NSString*)cc subject:(NSString*)subject body:(NSString*)body
 {
     NSString* str = [NSString stringWithFormat:@"mailto:%@?cc=%@&subject=%@&body=%@",
                      to, cc, subject, body];
     
-   str = [str stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
- //   [UMSocialData defaultData].shareText=str;
+    str = [str stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    //   [UMSocialData defaultData].shareText=str;
     
-       // UMSocialSnsPlatform *snsPlatform = [UMSocialSnsPlatformManager getSocialPlatformWithName:@"email"];
-
-     //   snsPlatform.snsClickHandler(self,[UMSocialControllerService defaultControllerService],YES);
+    // UMSocialSnsPlatform *snsPlatform = [UMSocialSnsPlatformManager getSocialPlatformWithName:@"email"];
     
-
-
- [[UIApplication sharedApplication] openURL:[NSURL URLWithString:str]];
+    //   snsPlatform.snsClickHandler(self,[UMSocialControllerService defaultControllerService],YES);
+    
+    
+    
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:str]];
     
     
 }
@@ -1589,14 +1616,14 @@
     [picker setSubject:@"分享自越野e族"];
     
     
- 
+    
     
     // Fill out the email body text
     NSString *emailBody =___str;
     [picker setMessageBody:emailBody isHTML:NO];
     
     [self presentModalViewController:picker animated:YES];
-
+    
     
     
 }
@@ -1624,9 +1651,6 @@
     [_replaceAlertView removeFromSuperview];
     _replaceAlertView=nil;
     _replaceAlertView.hidden=YES;
-    
-
- 
     
     [self.navigationController popViewControllerAnimated:YES];
 }
@@ -1840,6 +1864,26 @@
     [self presentModalViewController:browser animated:YES];
 }
 
+
+-(void)dealloc{
+    
+    
+    
+    
+    
+    
+    [requestimg cancel];
+    requestimg.delegate=nil;
+    requestimg=nil;
+    
+    
+    //   NSLog(@"%@",NSStringFromClass([newsdetailViewController class]));
+    _webView.delegate=nil;
+    secondWebView.delegate=nil;
+    [_webView removeFromSuperview];
+    [secondWebView removeFromSuperview];
+    
+}
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];

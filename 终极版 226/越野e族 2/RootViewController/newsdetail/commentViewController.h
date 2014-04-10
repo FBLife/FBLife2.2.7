@@ -13,6 +13,7 @@
 #import "LoadingIndicatorView.h"
 #import "AsyncImageView.h"
 #import "NewFaceView.h"
+#import "loadingimview.h"
 #import "WeiBoFaceScrollView.h"
 @interface commentViewController : UIViewController<UITextFieldDelegate,UITableViewDataSource,UITableViewDelegate,EGORefreshTableHeaderDelegate,UIActionSheetDelegate,UIScrollViewDelegate,downloaddelegate>{
     UITableView *tab_pinglunliebiao;
@@ -69,6 +70,7 @@
     
     int whichsectionopend;
     BOOL isopen;
+    loadingimview *_isloadingIv;//提示正在加载
 }
 - (void)reloadTableViewDataSource;
 - (void)doneLoadingTableViewData;
@@ -83,6 +85,8 @@
 @property(nonatomic,strong)NSString *string_date;
 @property(nonatomic,strong)NSString *string_commentnumber;
 @property(nonatomic,strong)NSString *string_author;
+@property(nonatomic,strong)NSString *string_resource;
+
 
 
 

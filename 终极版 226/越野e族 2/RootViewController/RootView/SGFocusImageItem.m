@@ -46,7 +46,7 @@
             self.type=[dict objectForKey:@"type"];
             self.idoftype=[dict objectForKey:@"idoftype"];
             self.link=[dict objectForKey:@"link"];
-
+            
             //...
         }
     }

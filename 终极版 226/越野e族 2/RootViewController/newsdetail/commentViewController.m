@@ -28,12 +28,13 @@
     
     NSString *string_106;//发送评论的评论
     NewMineViewController *_people;
+    UIImageView *secondimgv;//提示没有数据的那个header;
     
 }
 @end
 @implementation commentViewController
 @synthesize string_content,pageN,allcount,string_paixu,string_ID,string_biaoti;
-@synthesize string_commentnumber,string_date,string_title,string_author;
+@synthesize string_commentnumber,string_date,string_title,string_author,string_resource;
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -45,6 +46,9 @@
 -(void)viewWillAppear:(BOOL)animated{
     
     [super viewWillAppear:NO];
+    
+    
+    //    NSLog(@"编辑：%@",string_author);
     
     [MobClick beginEvent:@"commentViewController"];
     
@@ -71,12 +75,15 @@
 -(void)viewWillDisappear:(BOOL)animated
 {
     self.navigationController.navigationBarHidden = YES;
-    
+    _isloadingIv.hidden=YES;
     [MobClick endEvent:@"commentViewController"];
 }
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    
+    
     
     whichsectionopend=100000;
     isopen=YES;
@@ -113,7 +120,7 @@
     
     self.view.backgroundColor=[UIColor whiteColor];
     
-
+    
     //导航部分
     
     self.navigationItem.title = @"评论";
@@ -124,8 +131,8 @@
     
     self.navigationController.navigationBar.titleTextAttributes = dict;
     
-   UIButton *button_comment;
-//
+    UIButton *button_comment;
+    //
     if (MY_MACRO_NAME) {
         button_comment=[[UIButton alloc]initWithFrame:CGRectMake(15, (44-37/2)/2, 50, 37/2)];
         
@@ -138,7 +145,7 @@
     //[button_comment setTitle:@"评论" forState:UIControlStateNormal];
     button_comment.titleLabel.font=[UIFont systemFontOfSize:14];
     [button_comment addTarget:self action:@selector(paixu) forControlEvents:UIControlEventTouchUpInside];
-   // [button_comment setBackgroundImage:[UIImage imageNamed:MY_MACRO_NAME?@"ios_zhuanfa44_37.png": @"replay.png"] forState:UIControlStateNormal];
+    // [button_comment setBackgroundImage:[UIImage imageNamed:MY_MACRO_NAME?@"ios_zhuanfa44_37.png": @"replay.png"] forState:UIControlStateNormal];
     [button_comment setTitle:@"排序" forState:UIControlStateNormal];
     [button_comment setTitleColor:RGBCOLOR(128, 128, 128) forState:UIControlStateNormal];
     
@@ -147,22 +154,22 @@
     [rightView addTarget:self action:@selector(paixu) forControlEvents:UIControlEventTouchUpInside];
     [rightView addSubview:button_comment];
     rightView.backgroundColor=[UIColor clearColor];
-
-    
-//    button_comment.userInteractionEnabled=NO;
-//    button_comment.backgroundColor=[UIColor redColor];
     
     
-    UIBarButtonItem *comment_item=[[UIBarButtonItem alloc]initWithCustomView:rightView];
- //排序不先要，所以先隐藏掉
-//    self.navigationItem.rightBarButtonItem=comment_item;
-
+    //    button_comment.userInteractionEnabled=NO;
+    //    button_comment.backgroundColor=[UIColor redColor];
+    
+    
+    //  UIBarButtonItem *comment_item=[[UIBarButtonItem alloc]initWithCustomView:rightView];
+    //排序不先要，所以先隐藏掉
+    //    self.navigationItem.rightBarButtonItem=comment_item;
+    
     
     
     if([self.navigationController.navigationBar respondsToSelector:@selector(setBackgroundImage:forBarMetrics:)] ) {
         
         //iOS 5 new UINavigationBar custom background
-              [self.navigationController.navigationBar setBackgroundImage:MY_MACRO_NAME?[UIImage imageNamed:IOS7DAOHANGLANBEIJING]:[UIImage imageNamed:@"ios7eva320_44.png"] forBarMetrics: UIBarMetricsDefault];
+        [self.navigationController.navigationBar setBackgroundImage:MY_MACRO_NAME?[UIImage imageNamed:IOS7DAOHANGLANBEIJING]:[UIImage imageNamed:@"ios7eva320_44.png"] forBarMetrics: UIBarMetricsDefault];
     }
     //self.navigationController.navigationBar.tintColor=[UIColor colorWithRed:74 green:73 blue:72 alpha:1];
     
@@ -177,13 +184,13 @@
     [back_view addTarget:self action:@selector(backto) forControlEvents:UIControlEventTouchUpInside];
     UIBarButtonItem *back_item=[[UIBarButtonItem alloc]initWithCustomView:back_view];
     self.navigationItem.leftBarButtonItem=back_item;
-
+    
     
     //  self.navigationItem.title=@"新闻中心";
-//    self.navigationItem.titleView=yaoxibiaoti;
+    //    self.navigationItem.titleView=yaoxibiaoti;
     
     
-      //评论部分
+    //评论部分
     if (isiphone5) {
         view_pinglun=[[UIView alloc]initWithFrame:CGRectMake(0, 419+88-42, 320, 41)];
     }else{
@@ -198,9 +205,9 @@
     // Set required taps and number of touches
     [backkeyboard setNumberOfTapsRequired:1];
     [backkeyboard setNumberOfTouchesRequired:1];
-   // [aview addGestureRecognizer:backkeyboard];
+    // [aview addGestureRecognizer:backkeyboard];
     tab_pinglunliebiao.userInteractionEnabled=YES;
-     [tab_pinglunliebiao addGestureRecognizer:backkeyboard];
+    [tab_pinglunliebiao addGestureRecognizer:backkeyboard];
     
     
     
@@ -219,7 +226,7 @@
     text_write=[[UITextField alloc]initWithFrame:CGRectMake(45,MY_MACRO_NAME? (41-14)/2:(41-17)/2, 200,MY_MACRO_NAME? 15:17)];
     text_write.backgroundColor=[UIColor clearColor];
     [view_pinglun addSubview:text_write];
-     view_paixu.userInteractionEnabled=NO;
+    view_paixu.userInteractionEnabled=NO;
     
     
     
@@ -236,7 +243,7 @@
     [button_sender addTarget:self action:@selector(fabiao) forControlEvents:UIControlEventTouchUpInside];
     
     
-
+    
     
     isjianpan=NO;
     button_face=[[UIButton alloc]initWithFrame:CGRectMake(10, (40-43/2)/2, 43/2, 43/2)];
@@ -303,13 +310,13 @@
     
     tab_pinglunliebiao.separatorColor=[UIColor clearColor];
     tab_pinglunliebiao.backgroundColor=RGBCOLOR(245, 245, 245);
-   // tab_pinglunliebiao.backgroundColor=[UIColor redColor];
+    // tab_pinglunliebiao.backgroundColor=[UIColor redColor];
     
     tab_pinglunliebiao.delegate=self;
     tab_pinglunliebiao.dataSource=self;
     tab_pinglunliebiao.userInteractionEnabled=YES;
     [aview addSubview:tab_pinglunliebiao];
-   // aview.backgroundColor=[UIColor greenColor];
+    // aview.backgroundColor=[UIColor greenColor];
     
     UISwipeGestureRecognizer *_swipe=[[UISwipeGestureRecognizer alloc]initWithTarget:self action:@selector(backto)];
     _swipe.direction=UISwipeGestureRecognizerDirectionRight;
@@ -444,6 +451,14 @@
         [request setDelegate:self];
         [request startAsynchronous];
         NSLog(@"开始请求评论数据");
+        
+        if (!_isloadingIv) {
+            _isloadingIv=[[loadingimview alloc]initWithFrame:CGRectMake(100, 200, 150, 100) labelString:@"正在加载"];
+            [[UIApplication sharedApplication].keyWindow
+             addSubview:_isloadingIv];
+            
+        }
+        _isloadingIv.hidden=NO;
     }else{
         
         NSURL *url101 = [NSURL URLWithString:[NSString stringWithFormat:@"http://fb.fblife.com/openapi/index.php?mod=comment&code=commentlist&sort=7&sortid=%d&fbtype=json&page=1&order=2",[self.string_ID integerValue]]];
@@ -478,7 +493,7 @@
         pageN++;
         BOOL isqingqiu=     [personal islastpage:allcount pagenumber:pageN];
         if (isqingqiu==YES) {
-            NSString *string103=[[NSString alloc]initWithFormat:@"http://fb.fblife.com/openapi/index.php?mod=comment&code=commentlist&sortid=%@&fbtype=json&page=%d",self.string_ID,pageN];
+            NSString *string103=[[NSString alloc]initWithFormat:@"http://fb.fblife.com/openapi/index.php?mod=comment&code=commentlist&sort=7&sortid=%@&fbtype=json&page=%d",self.string_ID,pageN];
             NSURL *url103 = [NSURL URLWithString:string103];
             
             NSLog(@"ahaurl====%@",string103);
@@ -510,6 +525,8 @@
             NSLog(@"xxxxxx");
             
             NSLog(@"获取评论列表");
+            _isloadingIv.hidden=YES;
+            
             NSData *data=[request responseData];
             _dic = [data objectFromJSONData];
             NSLog(@"_dic======%@",_dic);
@@ -526,7 +543,9 @@
             array_weiboinfo= [_dic objectForKey:@"weiboinfo"];
             if (allcount==0) {
                 NSLog(@"jiutama0ge");
-               // tab_pinglunliebiao.tableFooterView=label_noneshuju;
+                secondimgv.hidden=NO;
+                
+                // tab_pinglunliebiao.tableFooterView=label_noneshuju;
                 
             }else{
                 NSLog(@"weiboinfo===%@",array_weiboinfo);
@@ -566,15 +585,13 @@
                         
                         [tab_pinglunliebiao reloadData];
                     }
-                    if([array_content count]>0&&[array_content count]<=20){
+                    if([array_content count]>0&&[array_content count]<20){
                         
                         tab_pinglunliebiao.tableFooterView=label_meiduoshao;
                         
                     }else{
                         tab_pinglunliebiao.tableFooterView=loadview;
-                        
                     }
-                    
                 }
                 else {
                     NSLog(@"wocao ,zhenmeiyou");
@@ -587,7 +604,6 @@
             break;
         case 102:{
             
-            
             NSData *data=[request responseData];
             
             _dic = [data objectFromJSONData];
@@ -598,26 +614,19 @@
                 NSString *stringerr=[NSString stringWithFormat:@"%@",[_dic objectForKey:@"data"]];
                 UIAlertView *alert_=[[UIAlertView alloc]initWithTitle:@"提示" message:stringerr delegate:nil cancelButtonTitle:@"知道了" otherButtonTitles:nil, nil];
                 [alert_ show];
-            }else{
+            }else
+            {
                 [self fasongpinglunqingqiu];
             }
             [activity stopAnimating];
-
- 
         }
-            
             break;
         case 103:{
-            
             
             isloadsuccess=!isloadsuccess;
             NSData *dataloadmore=[request responseData];
             NSDictionary *dic_loadmore=[dataloadmore objectFromJSONData];
-            
-            
-            
             NSLog(@"==dic_loadmore====%@",dic_loadmore);
-
             if (!array_weiboinfo) {
                 array_weiboinfo=[[NSMutableArray alloc]init];
             }else{
@@ -670,9 +679,9 @@
                     [loadview stopLoading:1];
                     
                 }
-               
                 
-
+                
+                
                 
                 
             }
@@ -824,7 +833,8 @@
     
     UILabel *label_name=[[UILabel alloc]initWithFrame:CGRectMake(55, 9, 100, 20)];
     label_name.backgroundColor=[UIColor clearColor];
-    label_name.font=[UIFont boldSystemFontOfSize:14.f];
+    label_name.textColor= RGBCOLOR(90,107,148);
+    label_name.font=[UIFont systemFontOfSize:15];
     
     UILabel *label_time=[[UILabel alloc]initWithFrame:CGRectMake(240, 7, 320-240-5, 15)];
     label_time.textAlignment=NSTextAlignmentLeft;
@@ -839,12 +849,13 @@
     
     AsyncImageView *image_head=[[AsyncImageView alloc]initWithFrame:CGRectMake(11, 13, 35, 35)];
     
+    label_time.frame=CGRectMake(245, image_head.frame.origin.y-1, 100, 20);
+    
     CALayer *l = [image_head layer];   //获取ImageView的层
     [l setMasksToBounds:YES];
     [l setCornerRadius:2.0f];
     
     if ([arrayofcommentc count]!=0) {
-        NSLog(@"image==%@",array_image);
         [ image_head loadImageFromURL:[dic_infocommofcomm objectForKey:@"face_original"] withPlaceholdImage:[UIImage imageNamed:@"head_img64X64.png"]];
         image_head.tag=[[dic_infocommofcomm objectForKey:@"uid"] integerValue];
         image_head.backgroundColor=[UIColor clearColor];
@@ -875,7 +886,7 @@
         
         otherheaderview.frame=CGRectMake(0, 0, 320, haha+48);
         
-        UIImageView *imagexian=[[UIImageView alloc]initWithFrame:CGRectMake(0, haha+44, 320, 4)];
+        UIImageView *imagexian=[[UIImageView alloc]initWithFrame:CGRectMake(0, haha+46, 320, 4)];
         imagexian.image=[UIImage imageNamed:@"lineofnews@2x.png"];
         [otherheaderview addSubview:imagexian];
         otherheaderview.backgroundColor=RGBCOLOR(247, 247, 247);
@@ -894,7 +905,7 @@
     NSString *stringtest=[string_neirong stringByReplacingOccurrencesOfString:@"[" withString:@" ["];
     NSArray *arraytest = [stringtest componentsSeparatedByString:@" "];
     
-    CGFloat haha=[self qugaodu:arraytest]+44;
+    CGFloat haha=[self qugaodu:arraytest]+49;
     
     return haha;
 }
@@ -909,7 +920,7 @@
         UIView *firstsectionview=[[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 156/2)];
         firstsectionview.backgroundColor=RGBCOLOR(255, 255, 255);
         UILabel *label_bigtitle=[[UILabel alloc]initWithFrame:CGRectMake(10, 10, 300, 30)];
-        label_bigtitle.font=[UIFont boldSystemFontOfSize:20];
+        label_bigtitle.font=[UIFont systemFontOfSize:20];
         label_bigtitle.lineBreakMode = UILineBreakModeWordWrap|UILineBreakModeTailTruncation;
         label_bigtitle.backgroundColor=[UIColor clearColor];
         label_bigtitle.text=self.string_title;
@@ -925,8 +936,13 @@
         label_bigtitle.textAlignment=UITextAlignmentLeft;
         [firstsectionview addSubview:label_bigtitle];
         
+        //计算来源的长度
         
-        UILabel *label_mytime=[[UILabel alloc]initWithFrame:CGRectMake(10, labelSize.height+15, 80, 20)];
+        //       CGSize conts = CGSizeMake(MAXFLOAT, 20);
+        //        CGSize maxsize = [self.string_resource sizeWithFont:[UIFont systemFontOfSize:11.f] constrainedToSize:conts lineBreakMode:NSLineBreakByCharWrapping];
+        //        NSLog(@"wight====%f",maxsize.width);
+        
+        UILabel *label_mytime=[[UILabel alloc]initWithFrame:CGRectMake(string_resource.length>4?137:100, labelSize.height+15, 80, 20)];
         label_mytime.font=[UIFont systemFontOfSize:11];
         label_mytime.textAlignment=UITextAlignmentLeft;
         label_mytime.textColor=[UIColor grayColor];
@@ -934,33 +950,35 @@
         label_mytime.backgroundColor=[UIColor clearColor];
         [firstsectionview addSubview:label_mytime];
         
-        UILabel *label_fblife=[[UILabel alloc]initWithFrame:CGRectMake(90,labelSize.height+15, 60, 20)];
+        
+        UILabel *label_fblife=[[UILabel alloc]initWithFrame:CGRectMake(10,labelSize.height+15, string_resource.length>4?120:90, 20)];
         label_fblife.font=[UIFont systemFontOfSize:11];
         label_fblife.textAlignment=UITextAlignmentLeft;
         label_fblife.textColor=[UIColor grayColor];
-        label_fblife.text=@"越野e族";
+        label_fblife.text=[NSString stringWithFormat:@"来自：%@",self.string_resource];
         label_fblife.backgroundColor=[UIColor clearColor];
         [firstsectionview addSubview:label_fblife];
         
         
         
-        UILabel *label_comment=[[UILabel alloc]initWithFrame:CGRectMake(150, labelSize.height+15, 100, 20)];
+        UILabel *label_comment=[[UILabel alloc]initWithFrame:CGRectMake(string_resource.length>4?210:177, labelSize.height+15, 100, 20)];
         label_comment.font=[UIFont systemFontOfSize:11];
         label_comment.textAlignment=UITextAlignmentLeft;
         label_comment.textColor=[UIColor grayColor];
         label_comment.backgroundColor=[UIColor clearColor];
-        label_comment.text=[NSString stringWithFormat:@"%@" ,self.string_author ];
+        if (string_author.length>0) {
+            label_comment.text=[NSString stringWithFormat:@"编辑：%@" ,self.string_author ];
+            
+        }
         [firstsectionview addSubview:label_comment];
         
         
         
         return firstsectionview ;
     }else if(section==1){
-        UIImageView *secondimgv=[[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 30)];
-       // secondimgv.image=[[UIImage imageNamed:@"pinglun_bg2856.png"]stretchableImageWithLeftCapWidth:5 topCapHeight:5];
+        secondimgv=[[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 30)];
         secondimgv.backgroundColor=[UIColor whiteColor];
         
-
         
         self.string_commentnumber=[NSString stringWithFormat:@"%d",array_name.count];
         
@@ -978,13 +996,15 @@
             
             //最下面的还没有人评论
             
-            UILabel *label_none=[[UILabel alloc]initWithFrame:CGRectMake(0, 105, 320, 20)];
             
+            UILabel *label_none=[[UILabel alloc]initWithFrame:CGRectMake(0, 105, 320, 20)];
             label_none.textAlignment=UITextAlignmentCenter;
             label_none.textColor=RGBCOLOR(205, 205, 205);
             label_none.text=@"还没有人评论";
             label_none.font=[UIFont systemFontOfSize:15];
             [secondimgv addSubview:label_none];
+            
+            secondimgv.hidden=YES;
             
             
             
@@ -992,14 +1012,16 @@
             UILabel *label_commentnumber=[[UILabel alloc]initWithFrame:CGRectMake(11, 5, 220, 20)];
             label_commentnumber.font=[UIFont systemFontOfSize:15];
             label_commentnumber.backgroundColor=[UIColor clearColor];
-            label_commentnumber.text=[NSString stringWithFormat:@"最新评论 (%@)",self.string_commentnumber];
+            label_commentnumber.text=[NSString stringWithFormat:@"最新评论（%d）",allcount];
+            
+            
             label_commentnumber.textColor=RGBCOLOR(1, 1, 1);
             [secondimgv addSubview:label_commentnumber];
             secondimgv.backgroundColor=RGBCOLOR(250, 250, 250);
         }
         
         
-
+        
         
         return secondimgv;
         
@@ -1029,7 +1051,8 @@
         
         UILabel *label_replys=[[UILabel alloc]init];
         label_replys.backgroundColor=[UIColor clearColor];
-        label_replys.textColor=RGBCOLOR(49 , 49, 49);
+        label_replys.textColor=RGBCOLOR(100 , 100, 140);
+        //        label_replys.textColor=[UIColor redColor];
         label_replys.font=[UIFont fontWithName:@"Helvetica" size:13.0];
         
         
@@ -1040,13 +1063,12 @@
         
         AsyncImageView *image_head=[[AsyncImageView alloc]initWithFrame:CGRectMake(11, 13, 35, 35)];
         
-//        CALayer *l = [image_head layer];   //获取ImageView的层
-//        [l setMasksToBounds:YES];
-//        [l setCornerRadius:2.0f];
+        //        CALayer *l = [image_head layer];   //获取ImageView的层
+        //        [l setMasksToBounds:YES];
+        //        [l setCornerRadius:2.0f];
         
         if ([array_name count]!=0) {
             
-            NSLog(@"image==%@",array_image);
             [image_head loadImageFromURL:[array_image objectAtIndex:section-2] withPlaceholdImage:[UIImage imageNamed:@"head_img64X64.png"]];
             image_head.tag=section+100;
             
@@ -1071,12 +1093,13 @@
             aview1.backgroundColor=[UIColor whiteColor];
             [otherheaderview addSubview:aview1];
             label_time.frame=CGRectMake(245, image_head.frame.origin.y-1, 100, 20);
-            img_reply.frame=CGRectMake(280, haha+49, 26/2, 25/2);
-           // [otherheaderview addSubview:img_reply];
+            img_reply.frame=CGRectMake(280, haha+38, 26/2, 25/2);
+            [otherheaderview addSubview:img_reply];
             
-            label_replys.frame=CGRectMake(300, haha+44, 100, 20);
+            label_replys.frame=CGRectMake(302, haha+33, 100, 20);
             label_replys.text=[NSString stringWithFormat:@"%@",[array_reply objectAtIndex:section-2]];
-            //[otherheaderview addSubview:label_replys];
+            //            label_replys.textColor=RGBCOLOR(20, 20, 40);
+            [otherheaderview addSubview:label_replys];
             otherheaderview.frame=CGRectMake(0, 0, 320, haha+48+20);
             
             otherheaderview.backgroundColor=RGBCOLOR(255, 255, 255);
@@ -1100,7 +1123,7 @@
                 tab_pinglunliebiao.backgroundColor=RGBCOLOR(255, 255, 255);
                 
             }
-        
+            
         }
         
         
@@ -1118,18 +1141,19 @@
         CGSize constraintSize = CGSizeMake(300, MAXFLOAT);
         CGSize labelSize = [self.string_title sizeWithFont:[UIFont boldSystemFontOfSize:20.f] constrainedToSize:constraintSize lineBreakMode:NSLineBreakByCharWrapping];
         
+        
         return labelSize.height+20+12+5;
     }else if(section==1)
     {
         self.string_commentnumber=[NSString stringWithFormat:@"%d",array_name.count];
-
+        
         
         
         if ([self.string_commentnumber integerValue]==0) {
             return isiphone5?340+88:340;
         }else{
             return 60/2;
-
+            
         }
         
     }
@@ -1403,34 +1427,34 @@
     [UIView setAnimationDuration:0.1];
     
     NSLog(@"keyboardheight===%f",kbSize.height);
-//    if (kbSize.height == 252)//中文键盘
-//    {
-//        if (isiphone5) {
-//            aview.frame=CGRectMake(0,-252-1, 320, 568);
-//            
-//        }else{
-//            aview.frame=CGRectMake(0,-252-1, 320, 480);
-//        }
-//    }else//英文键盘
-//    {
-//        if (isiphone5) {
-//            aview.frame=CGRectMake(0,-249+31, 320, 568);
-//            
-//        }else{
-//            aview.frame=CGRectMake(0,-249+31, 320, 480);
-//        }
-//    }
+    //    if (kbSize.height == 252)//中文键盘
+    //    {
+    //        if (isiphone5) {
+    //            aview.frame=CGRectMake(0,-252-1, 320, 568);
+    //
+    //        }else{
+    //            aview.frame=CGRectMake(0,-252-1, 320, 480);
+    //        }
+    //    }else//英文键盘
+    //    {
+    //        if (isiphone5) {
+    //            aview.frame=CGRectMake(0,-249+31, 320, 568);
+    //
+    //        }else{
+    //            aview.frame=CGRectMake(0,-249+31, 320, 480);
+    //        }
+    //    }
     int heightofkeyboard=(int)kbSize.height;
     switch (heightofkeyboard) {
         case 252:
         {
-        if (isiphone5) {
-            aview.frame=CGRectMake(0,-252-1, 320, 568);
-
-        }else{
-            aview.frame=CGRectMake(0,-252-1, 320, 480);
-        }
-
+            if (isiphone5) {
+                aview.frame=CGRectMake(0,-252-1, 320, 568);
+                
+            }else{
+                aview.frame=CGRectMake(0,-252-1, 320, 480);
+            }
+            
             
         }
             break;
@@ -1438,12 +1462,12 @@
             
         case 216:
         {
-        if (isiphone5) {
-            aview.frame=CGRectMake(0,-249+31, 320, 568);
-
-        }else{
-            aview.frame=CGRectMake(0,-249+31, 320, 480);
-        }
+            if (isiphone5) {
+                aview.frame=CGRectMake(0,-249+31, 320, 568);
+                
+            }else{
+                aview.frame=CGRectMake(0,-249+31, 320, 480);
+            }
             
             
         }
@@ -1472,7 +1496,7 @@
             
         }
             break;
-
+            
             
             
         default:
@@ -1504,7 +1528,7 @@
 -(void)textFieldDidBeginEditing:(UITextField *)textField{
     
     [self facescrowhiden];
-
+    
     if ([[NSUserDefaults standardUserDefaults] boolForKey:USER_IN])
     {
         if ([[NSUserDefaults standardUserDefaults] boolForKey:USER_CHECKUSER])
@@ -1577,7 +1601,7 @@
 -(void)fabiao{
     [self facescrowhiden];
     faceScrollView.frame =CGRectMake(0, 1000, self.view.frame.size.width, 215);
-
+    
     if (isiphone5) {
         aview.frame=CGRectMake(0, 0, 320, 568);
         
@@ -1623,7 +1647,7 @@
     button_face.backgroundColor=[UIColor clearColor];
     
     if (isjianpan) {
-    
+        
         button_face.frame=CGRectMake(10, (40-35/2)/2, 48/2, 35/2);
         [button_face setBackgroundImage:[UIImage imageNamed:@"ios7_keyboard_48_35.png"] forState:UIControlStateNormal];
         
@@ -1642,7 +1666,7 @@
         
     }else{
         button_face.frame=CGRectMake(10, (40-43/2)/2, 43/2, 43/2);
-
+        
         [button_face setBackgroundImage:[UIImage imageNamed:@"ios7_face43_43.png"] forState:UIControlStateNormal];
         
         [text_write becomeFirstResponder];
@@ -1673,7 +1697,7 @@
     
 }
 -(void)facescrowhiden{
-
+    
     faceScrollView.frame = CGRectMake(0, 900, self.view.frame.size.width, 221);
     pageControl.frame=CGRectMake(0, 900, self.view.frame.size.width, 25);
 }
